@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('https://img.freepik.com/free-vector/digital-technology-background-with-blue-orange-light-effect_1017-27423.jpg?semt=ais_hybrid&w=740') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(3px);
+            color: #fff;
+        }
+
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #34495e;
+            border-radius: 5px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .sidebar,
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar:hover,
+        .content:hover {
+            transform: scale(1.01);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        form input,
+        form textarea,
+        form button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        form input:focus,
+        form textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        form button {
+            background-color: #007BFF;
+            color: white;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        #todoApp input {
+            padding: 12px;
+            width: 70%;
+            margin-right: 5%;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        #todoApp button {
+            width: 25%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #todoApp button:hover {
+            background-color: #218838;
+        }
+
+        #todoApp ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #todoApp li {
+            background: #f7f7f7;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-left: 5px solid #007BFF;
+            border-radius: 6px;
+        }
+
+        #todoApp li button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            #todoApp input,
+            #todoApp button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#">🏠 Home</a>
+        <a href="#">📧 Contact</a>
+        <a href="#">📝 To-Do List</a>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar (Contact Form) -->
+        <div class="sidebar">
+            <h2>📧 Contact Form</h2>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Your Name">
+                <input type="email" id="email" placeholder="Your Email">
+                <textarea id="message" placeholder="Your Message"></textarea>
+                <div id="error" class="error"></div>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Main Content (To-Do List) -->
+        <div class="content">
+            <h2>📝 To-Do List</h2>
+            <div id="todoApp">
+                <input type="text" id="taskInput" placeholder="Enter a task">
+                <button id="addBtn">Add</button>
+                <ul id="taskList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contact Form Validation
+        const form = document.getElementById('contactForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            let errorMessages = [];
+
+            if (nameInput.value.trim() === '') {
+                errorMessages.push('Name is required.');
+            }
+            if (emailInput.value.trim() === '') {
+                errorMessages.push('Email is required.');
+            } else if (!/\S+@\S+\.\S+/.test(emailInput.value)) {
+                errorMessages.push('Email is not valid.');
+            }
+            if (messageInput.value.trim() === '') {
+                errorMessages.push('Message is required.');
+            }
+
+            if (errorMessages.length > 0) {
+                errorDiv.innerHTML = errorMessages.join('<br>');
+            } else {
+                errorDiv.innerHTML = '';
+                alert('Form submitted successfully!');
+                form.reset();
+            }
+        });
+
+        // To-Do List
+        const addBtn = document.getElementById('addBtn');
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+
+        addBtn.addEventListener('click', function () {
+            if (taskInput.value.trim() === '') return;
+
+            const li = document.createElement('li');
+            li.textContent = taskInput.value;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+
+            deleteBtn.addEventListener('click', function () {
+                taskList.removeChild(li);
+            });
+
+            li.appendChild(deleteBtn);
+            taskList.appendChild(li);
+
+            taskInput.value = '';
+        });
+    </script>
+</body>
+
+</html>
